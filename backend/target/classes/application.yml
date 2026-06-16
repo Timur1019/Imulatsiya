@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: imulatsiya
+  datasource:
+    url: jdbc:h2:file:./data/imulatsiya
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+server:
+  port: 8080
+
+storage:
+  upload-dir: ./data/uploads
+
+bus:
+  simulation:
+    tick-interval-ms: 1000

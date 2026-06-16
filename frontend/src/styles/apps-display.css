@@ -1,0 +1,56 @@
+.apps-display {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0f2744 0%, #1e3a5f 40%, #2c5282 100%);
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.apps-display__header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.apps-display__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.5rem;
+}
+
+.apps-display__time {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.apps-display__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 2rem;
+  align-content: start;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.apps-display__loading,
+.apps-display__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+}
+
+.apps-display__badge {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}

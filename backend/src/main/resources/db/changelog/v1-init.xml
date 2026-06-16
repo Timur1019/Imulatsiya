@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="v1-create-kiosk-app" author="imulatsiya">
+        <createTable tableName="kiosk_app">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="icon_url" type="VARCHAR(512)"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-create-ad-banner" author="imulatsiya">
+        <createTable tableName="ad_banner">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_url" type="VARCHAR(512)"/>
+            <column name="background_color" type="VARCHAR(16)" defaultValue="#1e3a5f"/>
+            <column name="duration_seconds" type="INT" defaultValueNumeric="10">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-seed-demo-data" author="imulatsiya">
+        <insert tableName="kiosk_app">
+            <column name="name" value="Карта города"/>
+            <column name="icon_url" value="🗺️"/>
+            <column name="sort_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="kiosk_app">
+            <column name="name" value="Погода"/>
+            <column name="icon_url" value="🌤️"/>
+            <column name="sort_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="kiosk_app">
+            <column name="name" value="Новости"/>
+            <column name="icon_url" value="📰"/>
+            <column name="sort_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="ad_banner">
+            <column name="title" value="Скидка 20% в кафе «Центральное»"/>
+            <column name="background_color" value="#1e3a5f"/>
+            <column name="duration_seconds" valueNumeric="8"/>
+            <column name="sort_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="ad_banner">
+            <column name="title" value="Новый маршрут №42 — каждые 15 минут"/>
+            <column name="background_color" value="#2d6a4f"/>
+            <column name="duration_seconds" valueNumeric="10"/>
+            <column name="sort_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="ad_banner">
+            <column name="title" value="Бесплатный Wi-Fi на остановках"/>
+            <column name="background_color" value="#7b2cbf"/>
+            <column name="duration_seconds" valueNumeric="7"/>
+            <column name="sort_order" valueNumeric="3"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,91 @@
+.ad-carousel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.ad-carousel__slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  text-align: center;
+  animation: adFadeIn 0.8s ease;
+  position: relative;
+}
+
+.ad-carousel__title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  max-width: 92%;
+  line-height: 1.25;
+  margin: 0;
+  padding: 1.25rem 1.5rem 1.75rem;
+  z-index: 2;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.ad-carousel__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 0;
+  position: absolute;
+  inset: 0;
+}
+
+.ad-carousel__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 0;
+  position: absolute;
+  inset: 0;
+}
+
+.ad-carousel__iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  position: absolute;
+  inset: 0;
+}
+
+.ad-carousel__dots {
+  position: absolute;
+  bottom: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 3;
+}
+
+.ad-carousel__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background 0.3s;
+}
+
+.ad-carousel__dot--active {
+  background: #fff;
+}
+
+.ad-carousel__empty {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.2rem;
+}
+
+@keyframes adFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}

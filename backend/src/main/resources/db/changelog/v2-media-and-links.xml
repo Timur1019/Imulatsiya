@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="v2-kiosk-app-link-url" author="imulatsiya">
+        <addColumn tableName="kiosk_app">
+            <column name="link_url" type="VARCHAR(512)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="v2-ad-banner-media" author="imulatsiya">
+        <renameColumn tableName="ad_banner"
+                      oldColumnName="image_url"
+                      newColumnName="media_url"
+                      columnDataType="VARCHAR(512)"/>
+
+        <addColumn tableName="ad_banner">
+            <column name="media_type" type="VARCHAR(16)" defaultValue="IMAGE">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <update tableName="ad_banner">
+            <column name="media_type" value="IMAGE"/>
+            <where>media_type IS NULL</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
+
