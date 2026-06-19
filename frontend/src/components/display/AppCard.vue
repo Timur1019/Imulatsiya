@@ -1,13 +1,21 @@
 <template>
   <div class="app-card" role="button" tabindex="0">
-    <img v-if="iconImage" class="app-card__icon-image" :src="iconImage" :alt="name" />
-    <span v-else class="app-card__icon">{{ icon }}</span>
+    <div class="app-card__icon-wrap">
+      <img
+        v-if="showImage"
+        class="app-card__icon-image"
+        :src="iconImage"
+        :alt="name"
+        @error="imageFailed = true"
+      />
+      <span v-else class="app-card__icon">{{ fallbackIcon }}</span>
+    </div>
     <span class="app-card__name">{{ name }}</span>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { toAbsoluteMediaUrl } from '../../api/displayApi'
 
 const props = defineProps({
@@ -16,12 +24,25 @@ const props = defineProps({
   iconUrl: { type: String, default: '' }
 })
 
+const imageFailed = ref(false)
+
+watch(
+  () => props.iconUrl,
+  () => {
+    imageFailed.value = false
+  }
+)
+
 const iconImage = computed(() => {
-  if (!props.iconUrl) return ''
-  if (props.iconUrl.startsWith('/')) return toAbsoluteMediaUrl(props.iconUrl)
-  if (props.iconUrl.startsWith('http://') || props.iconUrl.startsWith('https://')) return props.iconUrl
+  const url = props.iconUrl || ''
+  if (!url || imageFailed.value) return ''
+  if (url.startsWith('/')) return toAbsoluteMediaUrl(url)
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
   return ''
 })
+
+const showImage = computed(() => Boolean(iconImage.value))
+const fallbackIcon = computed(() => props.icon || '📱')
 </script>
 
 <style src="../../styles/app-card.css"></style>
