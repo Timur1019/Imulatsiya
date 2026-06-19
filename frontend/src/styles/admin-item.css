@@ -108,3 +108,49 @@
   cursor: pointer;
   padding: 2px;
 }
+
+.admin-item__upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.admin-item__upload-btn:hover {
+  background: var(--color-primary-light);
+}
+
+.admin-item__upload-input {
+  display: none;
+}
+
+.admin-item__upload-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-danger);
+}
+
+.admin-item__upload-success {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-success);
+}
+
+.admin-item__preview {
+  margin-top: 0.25rem;
+}
+
+.admin-item__preview-image,
+.admin-item__preview-video {
+  max-width: 220px;
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  object-fit: cover;
+}

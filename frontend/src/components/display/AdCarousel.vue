@@ -4,39 +4,80 @@
       v-if="currentAd"
       class="ad-carousel__slide"
       :style="{ backgroundColor: currentAd.backgroundColor || '#1e3a5f' }"
-      :key="currentAd.id || currentIndex"
+      :key="`${currentAd.id}-${rotationTick}`"
     >
       <iframe
-        v-if="isVideo && isYoutube && youtubeEmbedUrl"
+        v-if="mediaMode === 'youtube' && youtubeEmbedUrl"
         class="ad-carousel__iframe"
         :src="youtubeEmbedUrl"
+        :key="youtubeEmbedUrl"
         title="Ad video"
         frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+
+      <iframe
+        v-else-if="mediaMode === 'vimeo' && vimeoEmbedUrl"
+        class="ad-carousel__iframe"
+        :src="vimeoEmbedUrl"
+        :key="vimeoEmbedUrl"
+        title="Ad video"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
         allowfullscreen
       ></iframe>
+
       <video
-        v-else-if="isVideo && currentAd.mediaUrl"
+        v-else-if="mediaMode === 'video'"
+        ref="videoRef"
         class="ad-carousel__video"
         :src="mediaSrc"
+        :key="mediaSrc"
         autoplay
-        muted
         loop
         playsinline
+        preload="auto"
+        @loadeddata="onVideoReady"
+        @error="onVideoError"
       ></video>
+
       <img
-        v-else-if="currentAd.mediaUrl"
+        v-else-if="mediaMode === 'image'"
         :src="mediaSrc"
         :alt="currentAd.title"
         class="ad-carousel__image"
+        @error="mediaError = true"
       />
+
+      <div v-else-if="mediaMode === 'empty' || mediaError" class="ad-carousel__fallback">
+        <img
+          v-if="youtubeThumb"
+          :src="youtubeThumb"
+          class="ad-carousel__fallback-image"
+          alt=""
+        />
+        <p class="ad-carousel__fallback-text">
+          {{ fallbackMessage }}
+        </p>
+      </div>
+
       <h2 class="ad-carousel__title">{{ currentAd.title }}</h2>
     </div>
+
     <div v-else class="ad-carousel__empty">Нет активной рекламы</div>
 
-    <div v-if="ads.length > 1" class="ad-carousel__dots">
+    <div v-if="playableAds.length > 0" class="ad-carousel__progress">
+      <div
+        class="ad-carousel__progress-fill"
+        :style="{ width: progressPercent + '%' }"
+      ></div>
+    </div>
+
+    <div v-if="playableAds.length > 1" class="ad-carousel__dots">
       <span
-        v-for="(ad, idx) in ads"
+        v-for="(ad, idx) in playableAds"
         :key="ad.id || idx"
         class="ad-carousel__dot"
         :class="{ 'ad-carousel__dot--active': idx === currentIndex }"
@@ -46,46 +87,70 @@
 </template>
 
 <script setup>
-import { computed, toRef } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useAdRotation } from '../../composables/useAdRotation'
 import { toAbsoluteMediaUrl } from '../../api/displayApi'
+import { playVideoWithSound } from '../../composables/useVideoPlayback'
+import {
+  resolveMediaMode,
+  getYoutubeEmbedUrl,
+  getVimeoEmbedUrl,
+  getYoutubeThumbnail,
+  hasPlayableMedia
+} from '../../utils/adMedia'
 
 const props = defineProps({
   ads: { type: Array, default: () => [] }
 })
 
-const adsRef = toRef(props, 'ads')
-const { currentAd, currentIndex } = useAdRotation(adsRef)
+const playableAds = computed(() =>
+  (props.ads || []).filter(a => a.active && hasPlayableMedia(a))
+)
 
-const isVideo = computed(() => (currentAd.value?.mediaType || '') === 'VIDEO')
+const { currentAd, currentIndex, rotationTick, progressPercent } = useAdRotation(playableAds)
+
+const videoRef = ref(null)
+const mediaError = ref(false)
+
 const mediaSrc = computed(() => toAbsoluteMediaUrl(currentAd.value?.mediaUrl || ''))
+const mediaMode = computed(() => resolveMediaMode(currentAd.value))
+const youtubeEmbedUrl = computed(() => getYoutubeEmbedUrl(currentAd.value?.mediaUrl || ''))
+const vimeoEmbedUrl = computed(() => getVimeoEmbedUrl(currentAd.value?.mediaUrl || ''))
+const youtubeThumb = computed(() => getYoutubeThumbnail(currentAd.value?.mediaUrl || ''))
 
-const isYoutube = computed(() => {
-  const url = (currentAd.value?.mediaUrl || '').toLowerCase()
-  return url.includes('youtube.com') || url.includes('youtu.be')
-})
-
-const youtubeEmbedUrl = computed(() => {
-  const raw = currentAd.value?.mediaUrl || ''
-  if (!raw) return ''
-  try {
-    const u = new URL(raw)
-    let id = ''
-    if (u.hostname.includes('youtu.be')) {
-      id = u.pathname.replace('/', '')
-    } else {
-      id = u.searchParams.get('v') || ''
-      if (!id && u.pathname.startsWith('/shorts/')) id = u.pathname.split('/shorts/')[1] || ''
-      if (!id && u.pathname.startsWith('/embed/')) id = u.pathname.split('/embed/')[1] || ''
-    }
-    id = (id || '').split('?')[0].split('&')[0]
-    if (!id) return ''
-    // autoplay requires mute in most browsers; use modest branding
-    return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${id}`
-  } catch {
-    return ''
+const fallbackMessage = computed(() => {
+  if (!hasPlayableMedia(currentAd.value)) {
+    return 'Видео не добавлено. Загрузите файл или укажите ссылку в админке.'
   }
+  return 'Видео не воспроизводится в браузере. Попробуйте mp4/webm или другую ссылку.'
 })
+
+async function onVideoReady() {
+  mediaError.value = false
+  await playVideoWithSound(videoRef.value)
+}
+
+async function onVideoError() {
+  mediaError.value = true
+  const video = videoRef.value
+  if (!video) return
+  video.muted = true
+  try {
+    await video.play()
+  } catch {
+    /* ignore */
+  }
+}
+
+watch(
+  () => [currentAd.value?.id, mediaSrc.value, mediaMode.value],
+  () => {
+    mediaError.value = false
+    if (mediaMode.value === 'video') {
+      onVideoReady()
+    }
+  }
+)
 </script>
 
 <style src="../../styles/ad-carousel.css"></style>

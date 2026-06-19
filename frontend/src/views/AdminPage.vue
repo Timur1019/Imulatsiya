@@ -109,6 +109,13 @@ async function handlePublish() {
   publishing.value = true
   error.value = null
   try {
+    const invalidAd = ads.value.find(
+      ad => ad.active !== false && !((ad.mediaUrl || '').trim())
+    )
+    if (invalidAd) {
+      throw new Error(`У баннера «${invalidAd.title}» нет файла или ссылки. Сначала загрузите медиа.`)
+    }
+
     const payload = {
       apps: apps.value.map(({ _key, ...rest }) => ({
         ...rest,

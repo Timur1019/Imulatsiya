@@ -1,8 +1,12 @@
 spring:
   application:
     name: imulatsiya
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
   datasource:
-    url: jdbc:h2:file:./data/imulatsiya
+    url: jdbc:h2:file:./data/imulatsiya;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password:

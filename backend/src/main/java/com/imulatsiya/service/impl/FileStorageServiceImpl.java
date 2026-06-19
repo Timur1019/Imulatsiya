@@ -21,7 +21,7 @@ import java.util.Set;
 public class FileStorageServiceImpl implements FileStorageService {
 
     private static final Set<String> IMAGE_EXT = Set.of("png", "jpg", "jpeg", "webp", "gif");
-    private static final Set<String> VIDEO_EXT = Set.of("mp4", "webm", "mov");
+    private static final Set<String> VIDEO_EXT = Set.of("mp4", "webm", "mov", "m4v", "ogv");
 
     @Value("${storage.upload-dir:./data/uploads}")
     private String uploadDir;

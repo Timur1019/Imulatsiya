@@ -41,7 +41,7 @@ async function loadAds() {
 
 onMounted(() => {
   loadAds()
-  pollTimer = setInterval(loadAds, 5000)
+  pollTimer = setInterval(loadAds, 30000)
 })
 
 onUnmounted(() => {

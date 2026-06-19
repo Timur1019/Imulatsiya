@@ -1,5 +1,6 @@
 import apiClient from './axiosInstance'
 import { API_ORIGIN } from './axiosInstance'
+import { uploadAdMediaFile, uploadAppIconFile } from './uploadApi'
 
 export const fetchApps = () => apiClient.get('/apps').then(r => r.data)
 
@@ -16,21 +17,9 @@ export const publishDisplayConfig = (apps, ads) =>
 
 export const fetchBusStatus = () => apiClient.get('/buses/status').then(r => r.data)
 
-export const uploadAdMedia = (file) => {
-  const form = new FormData()
-  form.append('file', file)
-  return apiClient
-    .post('/files/ad-media', form, { headers: { 'Content-Type': 'multipart/form-data' } })
-    .then(r => r.data)
-}
+export const uploadAdMedia = (file, onProgress) => uploadAdMediaFile(file, onProgress)
 
-export const uploadAppIcon = (file) => {
-  const form = new FormData()
-  form.append('file', file)
-  return apiClient
-    .post('/files/app-icon', form, { headers: { 'Content-Type': 'multipart/form-data' } })
-    .then(r => r.data)
-}
+export const uploadAppIcon = (file, onProgress) => uploadAppIconFile(file, onProgress)
 
 export const toAbsoluteMediaUrl = (url) => {
   if (!url) return ''

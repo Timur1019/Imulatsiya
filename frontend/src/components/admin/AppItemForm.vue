@@ -56,8 +56,14 @@ const iconImage = computed(() => {
 async function onIconChange(e) {
   const file = e.target.files?.[0]
   if (!file) return
-  const res = await uploadAppIcon(file)
-  props.item.iconUrl = res.url
+  try {
+    const res = await uploadAppIcon(file)
+    props.item.iconUrl = res.url
+  } catch (err) {
+    alert(err.message || 'Не удалось загрузить иконку')
+  } finally {
+    e.target.value = ''
+  }
 }
 </script>
 
