@@ -13,7 +13,10 @@ export function useAdminConfig() {
     error.value = null
     try {
       const [appsData, adsData] = await Promise.all([fetchApps(), fetchAds()])
-      apps.value = appsData
+      apps.value = appsData.map(app => ({
+        ...app,
+        linkType: app.linkType || 'OPEN_URL'
+      }))
       ads.value = adsData
     } catch (e) {
       error.value = e.message

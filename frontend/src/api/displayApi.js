@@ -1,5 +1,5 @@
 import apiClient from './axiosInstance'
-import { API_ORIGIN } from './axiosInstance'
+import { resolveApiOrigin } from '../utils/apiOrigin'
 import { uploadAdMediaFile, uploadAppIconFile } from './uploadApi'
 
 export const fetchApps = () => apiClient.get('/apps').then(r => r.data)
@@ -24,5 +24,5 @@ export const uploadAppIcon = (file, onProgress) => uploadAppIconFile(file, onPro
 export const toAbsoluteMediaUrl = (url) => {
   if (!url) return ''
   if (url.startsWith('http://') || url.startsWith('https://')) return url
-  return `${API_ORIGIN}${url}`
+  return `${resolveApiOrigin()}${url}`
 }

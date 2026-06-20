@@ -1,6 +1,7 @@
 package com.imulatsiya.service.impl;
 
 import com.imulatsiya.dto.KioskAppDto;
+import com.imulatsiya.entity.AppLinkType;
 import com.imulatsiya.entity.KioskApp;
 import com.imulatsiya.exception.NotFoundException;
 import com.imulatsiya.mapper.KioskAppMapper;
@@ -56,6 +57,7 @@ public class KioskAppServiceImpl implements KioskAppService {
         entity.setName(dto.getName());
         entity.setIconUrl(dto.getIconUrl());
         entity.setLinkUrl(dto.getLinkUrl());
+        entity.setLinkType(parseLinkType(dto.getLinkType()));
         entity.setSortOrder(dto.getSortOrder());
         entity.setActive(dto.getActive());
         return mapper.toDto(repository.save(entity));
@@ -85,5 +87,16 @@ public class KioskAppServiceImpl implements KioskAppService {
         return repository.saveAll(entities).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private AppLinkType parseLinkType(String value) {
+        if (value == null) {
+            return AppLinkType.OPEN_URL;
+        }
+        try {
+            return AppLinkType.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            return AppLinkType.OPEN_URL;
+        }
     }
 }

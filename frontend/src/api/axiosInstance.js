@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { resolveApiOrigin } from '../utils/apiOrigin'
 
-export const API_ORIGIN = 'http://localhost:8080'
+export const API_ORIGIN = resolveApiOrigin()
 
 const apiClient = axios.create({
   baseURL: `${API_ORIGIN}/api`,

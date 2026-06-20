@@ -24,7 +24,8 @@
 .admin-item__icon-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  display: block;
 }
 
 .admin-item__icon-emoji {

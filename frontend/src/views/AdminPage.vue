@@ -79,6 +79,7 @@ function addApp() {
     name: 'Новое приложение',
     iconUrl: '📱',
     linkUrl: '',
+    linkType: 'OPEN_URL',
     sortOrder: apps.value.length + 1,
     active: true
   })
@@ -119,6 +120,7 @@ async function handlePublish() {
     const payload = {
       apps: apps.value.map(({ _key, ...rest }) => ({
         ...rest,
+        linkType: rest.linkType || 'OPEN_URL',
         sortOrder: rest.sortOrder || 1,
         active: rest.active !== false
       })),

@@ -1,0 +1,12 @@
+# Профиль prod: spring.profiles.active=prod
+# Можно переопределить через переменные окружения или этот файл на сервере
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+app:
+  cors:
+    allowed-origin-patterns:
+      - "http://YOUR_SERVER_IP:*"
+      - "https://YOUR_DOMAIN:*"

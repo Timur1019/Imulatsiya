@@ -20,6 +20,8 @@ public class KioskAppDto {
 
     private String linkUrl;
 
+    private String linkType;
+
     @NotNull(message = "Порядок обязателен")
     private Integer sortOrder;
 

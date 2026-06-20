@@ -2,7 +2,7 @@
   <div class="admin-item">
     <div class="admin-item__icon">
       <img v-if="iconImage" class="admin-item__icon-image" :src="iconImage" :alt="item.name" />
-      <span v-else class="admin-item__icon-emoji">{{ (item.iconUrl && !item.iconUrl.startsWith('/')) ? item.iconUrl : '📱' }}</span>
+      <span v-else class="admin-item__icon-emoji">{{ emojiFallback }}</span>
     </div>
     <div class="admin-item__fields">
       <input
@@ -10,16 +10,28 @@
         v-model="item.name"
         placeholder="Название приложения"
       />
-      <div v-if="item.iconUrl && item.iconUrl.startsWith('/')" class="admin-item__hint">
-        Иконка загружена: {{ item.iconUrl }}
-      </div>
       <div class="admin-item__row">
+        <select class="admin-item__input admin-item__input--type" v-model="item.linkType">
+          <option value="OPEN_URL">Открыть ссылку</option>
+          <option value="TRIGGER_GET">GET-запрос (устройство)</option>
+        </select>
         <input
           class="admin-item__input"
           v-model="item.linkUrl"
-          placeholder="Ссылка (https://...)"
+          :placeholder="linkPlaceholder"
         />
-        <input class="admin-item__input admin-item__input--file" type="file" accept="image/*" @change="onIconChange" />
+      </div>
+      <div class="admin-item__row">
+        <label class="admin-item__upload-btn">
+          {{ uploading ? `Загрузка ${uploadProgress}%` : 'Загрузить иконку' }}
+          <input
+            class="admin-item__upload-input"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            :disabled="uploading"
+            @change="onIconChange"
+          />
+        </label>
         <input
           class="admin-item__input admin-item__input--small"
           v-model.number="item.sortOrder"
@@ -32,18 +44,26 @@
           Активно
         </label>
       </div>
+      <p v-if="item.iconUrl && item.iconUrl.startsWith('/')" class="admin-item__hint">
+        Иконка: {{ item.iconUrl }}
+      </p>
+      <p v-if="uploadError" class="admin-item__upload-error">{{ uploadError }}</p>
+      <p v-else-if="uploadSuccess" class="admin-item__upload-success">{{ uploadSuccess }}</p>
     </div>
     <button class="admin-item__delete" @click="$emit('remove')" title="Удалить">✕</button>
   </div>
 </template>
 
 <script setup>
-import { uploadAppIcon } from '../../api/displayApi'
 import { computed } from 'vue'
 import { toAbsoluteMediaUrl } from '../../api/displayApi'
+import { APP_LINK_TYPES } from '../../utils/appLink'
+import { useAppIconUpload } from '../../composables/useAppIconUpload'
 
 const props = defineProps({ item: { type: Object, required: true } })
 defineEmits(['remove'])
+
+const { uploading, uploadProgress, uploadError, uploadSuccess, uploadIcon } = useAppIconUpload(props.item)
 
 const iconImage = computed(() => {
   const url = props.item?.iconUrl || ''
@@ -53,17 +73,23 @@ const iconImage = computed(() => {
   return ''
 })
 
+const emojiFallback = computed(() => {
+  const url = props.item?.iconUrl || ''
+  if (url && !url.startsWith('/') && !url.startsWith('http')) return url
+  return '📱'
+})
+
+const linkPlaceholder = computed(() => {
+  if (props.item?.linkType === APP_LINK_TYPES.TRIGGER_GET) {
+    return '/api/kiosk/devices/water'
+  }
+  return 'https://example.com'
+})
+
 async function onIconChange(e) {
   const file = e.target.files?.[0]
-  if (!file) return
-  try {
-    const res = await uploadAppIcon(file)
-    props.item.iconUrl = res.url
-  } catch (err) {
-    alert(err.message || 'Не удалось загрузить иконку')
-  } finally {
-    e.target.value = ''
-  }
+  await uploadIcon(file)
+  e.target.value = ''
 }
 </script>
 

@@ -20,6 +20,16 @@
       />
     </div>
 
+    <Transition name="apps-display-toast">
+      <div
+        v-if="toastMessage"
+        class="apps-display__toast"
+        :class="{ 'apps-display__toast--error': toastError }"
+      >
+        {{ toastMessage }}
+      </div>
+    </Transition>
+
     <span class="apps-display__badge">Экран: Большой киоск</span>
   </div>
 </template>
@@ -27,11 +37,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { fetchActiveApps } from '../api/displayApi'
+import { useKioskAppAction } from '../composables/useKioskAppAction'
 import AppCard from '../components/display/AppCard.vue'
 
 const apps = ref([])
 const loading = ref(true)
 const currentTime = ref('')
+const { toastMessage, toastError, openApp } = useKioskAppAction()
 let pollTimer = null
 let clockTimer = null
 
@@ -53,16 +65,9 @@ async function loadApps() {
   }
 }
 
-function openApp(app) {
-  const url = app?.linkUrl
-  if (!url) return
-  window.open(url, '_blank', 'noopener,noreferrer')
-}
-
 function getIcon(app) {
   const icon = app?.iconUrl
   if (!icon) return '📱'
-  // if it's emoji/text – show as-is; if it's /uploads/... – still show as text fallback
   return icon.startsWith('/') ? '📱' : icon
 }
 

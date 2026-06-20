@@ -1,5 +1,6 @@
 package com.imulatsiya.entity;
 
+import com.imulatsiya.entity.AppLinkType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,11 @@ public class KioskApp {
 
     @Column(name = "link_url", length = 512)
     private String linkUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "link_type", nullable = false, length = 32)
+    @Builder.Default
+    private AppLinkType linkType = AppLinkType.OPEN_URL;
 
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;

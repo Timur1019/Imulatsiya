@@ -4,3 +4,5 @@ backend/target
 backend/data
 .DS_Store
 .idea
+frontend/.env.local
+frontend/.env.*.local

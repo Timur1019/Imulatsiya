@@ -7,4 +7,5 @@
 
     <include file="db/changelog/v1-init.xml"/>
     <include file="db/changelog/v2-media-and-links.xml"/>
+    <include file="db/changelog/v3-kiosk-app-link-type.xml"/>
 </databaseChangeLog>

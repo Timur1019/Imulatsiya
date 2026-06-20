@@ -22,9 +22,21 @@ spring:
 
 server:
   port: 8080
+  address: 0.0.0.0
 
 storage:
-  upload-dir: ./data/uploads
+  upload-dir: ${user.dir}/data/uploads
+
+# CORS — разрешённые origin фронтенда (паттерны Spring)
+# На сервере добавьте IP/домен киоска, например: "http://192.168.1.50:*"
+app:
+  cors:
+    allowed-origin-patterns:
+      - "http://localhost:*"
+      - "http://127.0.0.1:*"
+      - "http://192.168.*:*"
+      - "http://10.*:*"
+      - "https://*"
 
 bus:
   simulation:

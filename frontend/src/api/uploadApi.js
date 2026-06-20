@@ -19,7 +19,6 @@ export const uploadAdMediaFile = (file, onProgress) => {
   form.append('file', file)
   return uploadClient
     .post('/files/ad-media', form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: onProgress
     })
     .then(r => r.data)
@@ -30,7 +29,6 @@ export const uploadAppIconFile = (file, onProgress) => {
   form.append('file', file)
   return uploadClient
     .post('/files/app-icon', form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: onProgress
     })
     .then(r => r.data)

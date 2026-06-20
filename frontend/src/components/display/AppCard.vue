@@ -3,6 +3,7 @@
     <div class="app-card__icon-wrap">
       <img
         v-if="showImage"
+        :key="iconImage"
         class="app-card__icon-image"
         :src="iconImage"
         :alt="name"

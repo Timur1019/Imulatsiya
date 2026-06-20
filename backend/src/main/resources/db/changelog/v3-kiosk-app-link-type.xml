@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="v3-kiosk-app-link-type" author="imulatsiya">
+        <addColumn tableName="kiosk_app">
+            <column name="link_type" type="VARCHAR(32)" defaultValue="OPEN_URL">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <update tableName="kiosk_app">
+            <column name="link_type" value="OPEN_URL"/>
+            <where>link_type IS NULL</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
