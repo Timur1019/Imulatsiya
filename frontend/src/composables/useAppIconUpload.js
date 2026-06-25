@@ -1,7 +1,9 @@
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { uploadAppIcon } from '../api/displayApi'
 
 export function useAppIconUpload(item) {
+  const { t } = useI18n()
   const uploading = ref(false)
   const uploadProgress = ref(0)
   const uploadError = ref('')
@@ -21,9 +23,9 @@ export function useAppIconUpload(item) {
         uploadProgress.value = Math.round((event.loaded / event.total) * 100)
       })
       item.iconUrl = result.url
-      uploadSuccess.value = 'Иконка загружена'
+      uploadSuccess.value = t('admin.iconUploaded')
     } catch (err) {
-      uploadError.value = err.message || 'Не удалось загрузить иконку'
+      uploadError.value = err.message || t('admin.iconUploadFailed')
     } finally {
       uploading.value = false
     }

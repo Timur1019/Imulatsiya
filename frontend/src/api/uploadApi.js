@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_ORIGIN } from './axiosInstance'
+import { i18n } from '../i18n'
 
 const uploadClient = axios.create({
   baseURL: `${API_ORIGIN}/api`,
@@ -9,7 +10,7 @@ const uploadClient = axios.create({
 uploadClient.interceptors.response.use(
   response => response,
   error => {
-    const message = error.response?.data?.message || error.message || 'Ошибка загрузки файла'
+    const message = error.response?.data?.message || error.message || i18n.global.t('errors.upload')
     return Promise.reject(new Error(message))
   }
 )

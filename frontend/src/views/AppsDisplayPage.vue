@@ -7,9 +7,9 @@
     />
 
     <div class="apps-display__body">
-      <div v-if="loading" class="apps-display__loading">Загрузка...</div>
+      <div v-if="loading" class="apps-display__loading">{{ t('common.loading') }}</div>
       <div v-else-if="displayApps.length === 0" class="apps-display__empty">
-        Нет приложений. Настройте в админке.
+        {{ t('display.noApps') }}
       </div>
       <div v-else class="apps-display__grid">
         <AppCard
@@ -39,6 +39,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { fetchActiveApps } from '../api/displayApi'
 import { useKioskAppAction } from '../composables/useKioskAppAction'
 import { useKioskClock } from '../composables/useKioskClock'
@@ -47,6 +48,7 @@ import AppCard from '../components/display/AppCard.vue'
 import DisplayHeader from '../components/display/DisplayHeader.vue'
 import DisplayFooter from '../components/display/DisplayFooter.vue'
 
+const { t } = useI18n()
 const apps = ref([])
 const loading = ref(true)
 const { currentTime } = useKioskClock()

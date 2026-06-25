@@ -4,7 +4,7 @@
     class="sos-button"
     :class="{ 'sos-button--loading': loading }"
     :disabled="loading"
-    aria-label="SOS — экстренный вызов"
+    :aria-label="t('display.sosAria')"
     @click="$emit('click')"
   >
     <span class="sos-button__label">SOS</span>
@@ -18,11 +18,15 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
 defineProps({
   loading: { type: Boolean, default: false }
 })
 
 defineEmits(['click'])
+
+const { t } = useI18n()
 </script>
 
 <style src="../../styles/sos-button.css"></style>

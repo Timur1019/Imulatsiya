@@ -1,8 +1,8 @@
 <template>
   <div class="admin-page">
     <div class="admin-page__header">
-      <h1 class="admin-page__title">Админ-панель</h1>
-      <router-link to="/" class="admin-page__back">← На главную</router-link>
+      <h1 class="admin-page__title">{{ t('admin.title') }}</h1>
+      <router-link to="/" class="admin-page__back">{{ t('admin.backHome') }}</router-link>
     </div>
 
     <div v-if="error" class="admin-page__alert admin-page__alert--error">{{ error }}</div>
@@ -16,17 +16,17 @@
         :disabled="publishing || loading"
         @click="handlePublish"
       >
-        {{ publishing ? 'Публикация...' : '🚀 Опубликовать на экраны' }}
+        {{ publishing ? t('admin.publishing') : t('admin.publish') }}
       </button>
     </div>
 
-    <div v-if="loading" class="admin-section__empty">Загрузка...</div>
+    <div v-if="loading" class="admin-section__empty">{{ t('common.loading') }}</div>
 
     <div v-else class="admin-page__sections">
       <section class="admin-section">
         <div class="admin-section__header">
-          <h2 class="admin-section__title">Приложения киоска</h2>
-          <button class="admin-section__add-btn" @click="addApp">+ Добавить</button>
+          <h2 class="admin-section__title">{{ t('admin.appsSection') }}</h2>
+          <button class="admin-section__add-btn" @click="addApp">{{ t('admin.add') }}</button>
         </div>
         <div class="admin-section__list">
           <AppItemForm
@@ -36,15 +36,15 @@
             @remove="removeApp(idx)"
           />
           <div v-if="apps.length === 0" class="admin-section__empty">
-            Нет приложений. Добавьте хотя бы одно.
+            {{ t('admin.noApps') }}
           </div>
         </div>
       </section>
 
       <section class="admin-section">
         <div class="admin-section__header">
-          <h2 class="admin-section__title">Рекламные баннеры</h2>
-          <button class="admin-section__add-btn" @click="addAd">+ Добавить</button>
+          <h2 class="admin-section__title">{{ t('admin.adsSection') }}</h2>
+          <button class="admin-section__add-btn" @click="addAd">{{ t('admin.add') }}</button>
         </div>
         <div class="admin-section__list">
           <AdItemForm
@@ -54,7 +54,7 @@
             @remove="removeAd(idx)"
           />
           <div v-if="ads.length === 0" class="admin-section__empty">
-            Нет рекламы. Добавьте баннеры для ротации.
+            {{ t('admin.noAds') }}
           </div>
         </div>
       </section>
@@ -64,11 +64,13 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAdminConfig } from '../composables/useAdminConfig'
 import { publishDisplayConfig } from '../api/displayApi'
 import AppItemForm from '../components/admin/AppItemForm.vue'
 import AdItemForm from '../components/admin/AdItemForm.vue'
 
+const { t } = useI18n()
 const { apps, ads, loading, error, successMessage, showSuccess } = useAdminConfig()
 const publishing = ref(false)
 let keyCounter = 0
@@ -76,7 +78,7 @@ let keyCounter = 0
 function addApp() {
   apps.value.push({
     _key: `new-app-${++keyCounter}`,
-    name: 'Новое приложение',
+    name: t('admin.newApp'),
     iconUrl: '📱',
     linkUrl: '',
     linkType: 'OPEN_URL',
@@ -92,7 +94,7 @@ function removeApp(idx) {
 function addAd() {
   ads.value.push({
     _key: `new-ad-${++keyCounter}`,
-    title: 'Новая реклама',
+    title: t('admin.newAd'),
     mediaType: 'IMAGE',
     mediaUrl: '',
     backgroundColor: '#1e3a5f',
@@ -114,7 +116,7 @@ async function handlePublish() {
       ad => ad.active !== false && !((ad.mediaUrl || '').trim())
     )
     if (invalidAd) {
-      throw new Error(`У баннера «${invalidAd.title}» нет файла или ссылки. Сначала загрузите медиа.`)
+      throw new Error(t('admin.adMissingMedia', { title: invalidAd.title }))
     }
 
     const payload = {
@@ -135,7 +137,7 @@ async function handlePublish() {
     const result = await publishDisplayConfig(payload.apps, payload.ads)
     apps.value = result.apps
     ads.value = result.ads
-    showSuccess('Конфигурация опубликована! Экраны обновятся автоматически.')
+    showSuccess(t('admin.publishSuccess'))
   } catch (e) {
     error.value = e.message
   } finally {

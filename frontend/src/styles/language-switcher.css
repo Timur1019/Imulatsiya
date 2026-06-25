@@ -1,0 +1,130 @@
+.lang-switch {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 200;
+}
+
+.lang-switch__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 148px;
+  padding: 0.55rem 0.85rem 0.55rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(15, 39, 68, 0.14);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.lang-switch__trigger:hover {
+  box-shadow: 0 8px 28px rgba(15, 39, 68, 0.18);
+  transform: translateY(-1px);
+}
+
+.lang-switch__trigger--open {
+  border-color: #1e3a5f;
+  box-shadow: 0 10px 32px rgba(30, 58, 95, 0.22);
+}
+
+.lang-switch__flag {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.lang-switch__label {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.lang-switch__chevron {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.lang-switch__trigger--open .lang-switch__chevron {
+  transform: rotate(180deg);
+  color: #1e3a5f;
+}
+
+.lang-switch__menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  min-width: 100%;
+  padding: 0.35rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(15, 39, 68, 0.16);
+  overflow: hidden;
+}
+
+.lang-switch__option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lang-switch__option:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.lang-switch__option--active {
+  background: #1e3a5f;
+  color: #ffffff;
+}
+
+.lang-switch__option--active:hover {
+  background: #2c5282;
+  color: #ffffff;
+}
+
+.lang-switch__option-flag {
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lang-switch__option-label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.lang-switch__check {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.95;
+}
+
+.lang-switch-menu-enter-active,
+.lang-switch-menu-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.lang-switch-menu-enter-from,
+.lang-switch-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+}

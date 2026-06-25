@@ -11,7 +11,7 @@
         class="ad-carousel__iframe"
         :src="youtubeEmbedUrl"
         :key="youtubeEmbedUrl"
-        title="Ad video"
+        :title="t('ad.videoTitle')"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
         allowfullscreen
@@ -23,7 +23,7 @@
         class="ad-carousel__iframe"
         :src="vimeoEmbedUrl"
         :key="vimeoEmbedUrl"
-        title="Ad video"
+        :title="t('ad.videoTitle')"
         frameborder="0"
         allow="autoplay; fullscreen; picture-in-picture"
         allowfullscreen
@@ -66,7 +66,7 @@
       <h2 class="ad-carousel__title">{{ currentAd.title }}</h2>
     </div>
 
-    <div v-else class="ad-carousel__empty">Нет активной рекламы</div>
+    <div v-else class="ad-carousel__empty">{{ t('ad.noActive') }}</div>
 
     <div v-if="playableAds.length > 0" class="ad-carousel__progress">
       <div
@@ -88,6 +88,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAdRotation } from '../../composables/useAdRotation'
 import { toAbsoluteMediaUrl } from '../../api/displayApi'
 import { playVideoWithSound } from '../../composables/useVideoPlayback'
@@ -102,6 +103,8 @@ import {
 const props = defineProps({
   ads: { type: Array, default: () => [] }
 })
+
+const { t } = useI18n()
 
 const playableAds = computed(() =>
   (props.ads || []).filter(a => a.active && hasPlayableMedia(a))
@@ -120,9 +123,9 @@ const youtubeThumb = computed(() => getYoutubeThumbnail(currentAd.value?.mediaUr
 
 const fallbackMessage = computed(() => {
   if (!hasPlayableMedia(currentAd.value)) {
-    return 'Видео не добавлено. Загрузите файл или укажите ссылку в админке.'
+    return t('ad.noVideo')
   }
-  return 'Видео не воспроизводится в браузере. Попробуйте mp4/webm или другую ссылку.'
+  return t('ad.playbackError')
 })
 
 async function onVideoReady() {

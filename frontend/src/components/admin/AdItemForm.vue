@@ -4,15 +4,19 @@
       <input
         class="admin-item__input"
         v-model="item.title"
-        placeholder="Текст рекламы"
+        :placeholder="t('admin.adTitlePlaceholder')"
       />
       <div class="admin-item__row">
         <select class="admin-item__input admin-item__input--type" v-model="item.mediaType">
-          <option value="IMAGE">Фото</option>
-          <option value="VIDEO">Видео</option>
+          <option value="IMAGE">{{ t('admin.mediaPhoto') }}</option>
+          <option value="VIDEO">{{ t('admin.mediaVideo') }}</option>
         </select>
         <label class="admin-item__upload-btn">
-          {{ uploading ? `Загрузка ${uploadProgress}%` : 'Выбрать файл' }}
+          {{
+            uploading
+              ? t('common.uploadProgress', { percent: uploadProgress })
+              : t('admin.selectFile')
+          }}
           <input
             class="admin-item__upload-input"
             type="file"
@@ -26,24 +30,24 @@
         <input
           class="admin-item__input"
           v-model="item.mediaUrl"
-          placeholder="Ссылка (YouTube) или путь появится после загрузки"
+          :placeholder="t('admin.mediaUrlPlaceholder')"
         />
       </div>
       <p v-if="uploadError" class="admin-item__upload-error">{{ uploadError }}</p>
       <p v-else-if="uploadSuccess" class="admin-item__upload-success">{{ uploadSuccess }}</p>
       <div v-if="previewUrl" class="admin-item__preview">
         <video v-if="item.mediaType === 'VIDEO' && isLocalFile" :src="previewUrl" controls muted class="admin-item__preview-video" />
-        <img v-else-if="isLocalFile || item.mediaType === 'IMAGE'" :src="previewUrl" alt="preview" class="admin-item__preview-image" />
+        <img v-else-if="isLocalFile || item.mediaType === 'IMAGE'" :src="previewUrl" :alt="t('common.preview')" class="admin-item__preview-image" />
       </div>
       <div class="admin-item__row">
         <input
           type="color"
           class="admin-item__color"
           v-model="item.backgroundColor"
-          title="Цвет фона"
+          :title="t('common.bgColor')"
         />
         <div>
-          <span class="admin-item__label">Секунд</span>
+          <span class="admin-item__label">{{ t('common.seconds') }}</span>
           <input
             class="admin-item__input admin-item__input--small"
             v-model.number="item.durationSeconds"
@@ -57,25 +61,27 @@
           v-model.number="item.sortOrder"
           type="number"
           min="1"
-          title="Порядок"
+          :title="t('common.order')"
         />
         <label class="admin-item__toggle">
           <input type="checkbox" v-model="item.active" />
-          Активно
+          {{ t('common.active') }}
         </label>
       </div>
     </div>
-    <button class="admin-item__delete" @click="$emit('remove')" title="Удалить">✕</button>
+    <button class="admin-item__delete" @click="$emit('remove')" :title="t('common.delete')">✕</button>
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { uploadAdMedia, toAbsoluteMediaUrl } from '../../api/displayApi'
 
 const props = defineProps({ item: { type: Object, required: true } })
 defineEmits(['remove', 'uploading'])
 
+const { t } = useI18n()
 const uploading = ref(false)
 const uploadProgress = ref(0)
 const uploadError = ref('')
@@ -110,9 +116,9 @@ async function onFileChange(e) {
       }
     })
     props.item.mediaUrl = res.url
-    uploadSuccess.value = `Файл загружен: ${res.originalFilename || file.name}`
+    uploadSuccess.value = t('admin.fileUploaded', { name: res.originalFilename || file.name })
   } catch (err) {
-    uploadError.value = err.message || 'Не удалось загрузить файл'
+    uploadError.value = err.message || t('admin.uploadFileFailed')
   } finally {
     uploading.value = false
     e.target.value = ''

@@ -1,4 +1,5 @@
 import { resolveApiOrigin } from './apiOrigin'
+import { i18n } from '../i18n'
 
 export const APP_LINK_TYPES = {
   OPEN_URL: 'OPEN_URL',
@@ -13,10 +14,10 @@ export function resolveLinkTarget(url) {
   return trimmed
 }
 
-export async function executeAppLink(app) {
+export async function executeAppLink(app, t = i18n.global.t) {
   const url = (app?.linkUrl || '').trim()
   if (!url) {
-    return { ok: false, message: 'Ссылка не задана' }
+    return { ok: false, message: t('errors.linkNotSet') }
   }
 
   const linkType = app?.linkType || APP_LINK_TYPES.OPEN_URL
@@ -25,12 +26,12 @@ export async function executeAppLink(app) {
     const target = resolveLinkTarget(url)
     const response = await fetch(target, { method: 'GET', mode: 'cors' })
     if (!response.ok) {
-      throw new Error(`Ошибка сервера: ${response.status}`)
+      throw new Error(t('errors.serverError', { status: response.status }))
     }
     const data = await response.json().catch(() => ({}))
     return {
       ok: true,
-      message: data.message || 'Команда отправлена'
+      message: data.message || t('api.commandSent')
     }
   }
 
