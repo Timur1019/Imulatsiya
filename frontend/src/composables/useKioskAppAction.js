@@ -26,5 +26,5 @@ export function useKioskAppAction() {
     }
   }
 
-  return { toastMessage, toastError, openApp }
+  return { toastMessage, toastError, openApp, showToast }
 }

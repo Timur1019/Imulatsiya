@@ -19,4 +19,14 @@ public class DeviceTriggerServiceImpl implements DeviceTriggerService {
                 .message("Команда отправлена на кулер")
                 .build();
     }
+
+    @Override
+    public DeviceTriggerResponseDto triggerSos() {
+        LogUtil.info("SOS: экстренный вызов");
+        return DeviceTriggerResponseDto.builder()
+                .success(true)
+                .device("sos")
+                .message("SOS сигнал отправлен")
+                .build();
+    }
 }

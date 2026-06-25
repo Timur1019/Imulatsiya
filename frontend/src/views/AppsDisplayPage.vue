@@ -1,23 +1,26 @@
 <template>
   <div class="apps-display">
-    <header class="apps-display__header">
-      <h1 class="apps-display__title">Информационный киоск</h1>
-      <div class="apps-display__time">{{ currentTime }}</div>
-    </header>
+    <DisplayHeader
+      :current-time="currentTime"
+      :sos-loading="sosLoading"
+      @sos="handleSos"
+    />
 
-    <div v-if="loading" class="apps-display__loading">Загрузка...</div>
-    <div v-else-if="apps.length === 0" class="apps-display__empty">
-      Нет приложений. Настройте в админке.
-    </div>
-    <div v-else class="apps-display__grid">
-      <AppCard
-        v-for="app in apps"
-        :key="app.id"
-        :name="app.name"
-        :icon="getIcon(app)"
-        :icon-url="app.iconUrl"
-        @click="openApp(app)"
-      />
+    <div class="apps-display__body">
+      <div v-if="loading" class="apps-display__loading">Загрузка...</div>
+      <div v-else-if="displayApps.length === 0" class="apps-display__empty">
+        Нет приложений. Настройте в админке.
+      </div>
+      <div v-else class="apps-display__grid">
+        <AppCard
+          v-for="app in displayApps"
+          :key="app.id"
+          :name="app.name"
+          :icon="getIcon(app)"
+          :icon-url="app.iconUrl"
+          @click="openApp(app)"
+        />
+      </div>
     </div>
 
     <Transition name="apps-display-toast">
@@ -30,30 +33,29 @@
       </div>
     </Transition>
 
-    <span class="apps-display__badge">Экран: Большой киоск</span>
+    <DisplayFooter />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { fetchActiveApps } from '../api/displayApi'
 import { useKioskAppAction } from '../composables/useKioskAppAction'
+import { useKioskClock } from '../composables/useKioskClock'
+import { useSosAction } from '../composables/useSosAction'
 import AppCard from '../components/display/AppCard.vue'
+import DisplayHeader from '../components/display/DisplayHeader.vue'
+import DisplayFooter from '../components/display/DisplayFooter.vue'
 
 const apps = ref([])
 const loading = ref(true)
-const currentTime = ref('')
-const { toastMessage, toastError, openApp } = useKioskAppAction()
-let pollTimer = null
-let clockTimer = null
+const { currentTime } = useKioskClock()
+const { toastMessage, toastError, openApp, showToast } = useKioskAppAction()
+const { loading: sosLoading, handleSos } = useSosAction(showToast)
 
-function updateClock() {
-  currentTime.value = new Date().toLocaleString('ru-RU', {
-    weekday: 'long',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+const displayApps = computed(() => apps.value.slice(0, 10))
+
+let pollTimer = null
 
 async function loadApps() {
   try {
@@ -72,15 +74,12 @@ function getIcon(app) {
 }
 
 onMounted(() => {
-  updateClock()
   loadApps()
-  clockTimer = setInterval(updateClock, 1000)
   pollTimer = setInterval(loadApps, 5000)
 })
 
 onUnmounted(() => {
   if (pollTimer) clearInterval(pollTimer)
-  if (clockTimer) clearInterval(clockTimer)
 })
 </script>
 

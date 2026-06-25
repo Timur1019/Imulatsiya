@@ -24,4 +24,11 @@ public class DeviceTriggerController {
     public DeviceTriggerResponseDto triggerWater() {
         return deviceTriggerService.triggerWaterCooler();
     }
+
+    @GetMapping("/sos")
+    @Operation(summary = "SOS — экстренный вызов")
+    @ApiResponse(responseCode = "200", description = "Сигнал принят")
+    public DeviceTriggerResponseDto triggerSos() {
+        return deviceTriggerService.triggerSos();
+    }
 }

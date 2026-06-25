@@ -5,4 +5,6 @@ import com.imulatsiya.dto.DeviceTriggerResponseDto;
 public interface DeviceTriggerService {
 
     DeviceTriggerResponseDto triggerWaterCooler();
+
+    DeviceTriggerResponseDto triggerSos();
 }
